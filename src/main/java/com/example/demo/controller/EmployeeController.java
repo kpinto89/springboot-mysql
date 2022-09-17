@@ -23,11 +23,6 @@ public class EmployeeController {
         return employeeService.fetchEmployeeList();
     }
 
-    @PutMapping("/employees/{id}")
-    public Employee updateEmployee(@RequestBody Employee employee, @PathVariable("id") Long employeeId) {
-        return employeeService.updateEmployee(employee, employeeId);
-    }
-
     @DeleteMapping("/employees/{id}")
     public String deleteEmployeeById(@PathVariable("id") Long employeeId) {
         employeeService.deleteEmployeeById(employeeId);

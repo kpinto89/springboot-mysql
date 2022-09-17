@@ -2,20 +2,30 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.repository.EmployeeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private final String URL = "http://host.docker.internal:8087/employees";
+
     @Override
     public Employee saveEmployee(Employee employee) {
+        Employee employeeResponse = restTemplate.postForObject(URL, employee, Employee.class);
+        log.info("Response" + employeeResponse);
         return employeeRepository.save(employee);
     }
 
@@ -25,33 +35,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee updateEmployee(Employee employee, Long employeeId)
-    {
-        Employee depDB = employeeRepository.findById(employeeId).get();
-
-        if (Objects.nonNull(employee.getEmployeeFirstName()) && !"".equalsIgnoreCase(employee.getEmployeeFirstName())) {
-            depDB.setEmployeeFirstName(employee.getEmployeeFirstName());
-        }
-
-        if (Objects.nonNull(employee.getEmployeeLastName()) && !"".equalsIgnoreCase(employee.getEmployeeLastName())) {
-            depDB.setEmployeeLastName(employee.getEmployeeLastName());
-        }
-
-        if (Objects.nonNull(employee.getEmployeeAddress()) && !"".equalsIgnoreCase(employee.getEmployeeAddress())) {
-            depDB.setEmployeeAddress(employee.getEmployeeAddress());
-        }
-
-        if (Objects.nonNull(employee.getEmployeeEmail()) && !"".equalsIgnoreCase(employee.getEmployeeEmail())) {
-            depDB.setEmployeeEmail(employee.getEmployeeEmail());
-        }
-
-
-
-        return employeeRepository.save(depDB);
-    }
-
-    @Override
     public void deleteEmployeeById(Long employeeId) {
+        URI deleteURI = URI.create(URL+"/"+ employeeId);
+        restTemplate.delete(deleteURI);
         employeeRepository.deleteById(employeeId);
     }
 }

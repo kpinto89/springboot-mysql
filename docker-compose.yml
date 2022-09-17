@@ -2,13 +2,16 @@ version: '3'
 
 services:
   springboot-mysql:
+    build: .
     image: kevpin/springboot-mysql
     ports:
-      - 9092:8086
+      - 8086:8086
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/mysqldemo?autoReconnect=true&useSSL=false
     depends_on:
       - mysql-standalone
+    extra_hosts:
+      - host.docker.internal:host-gateway
   mysql-standalone:
     image: mysql:5.6
     container_name: mysql-standalone
