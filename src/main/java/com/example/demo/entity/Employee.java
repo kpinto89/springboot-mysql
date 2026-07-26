@@ -20,5 +20,6 @@ public class Employee {
     private String employeeLastName;
     private String employeeAddress;
     private String employeeEmail;
+    //This is Entity class
 
 }
